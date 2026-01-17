@@ -34,7 +34,13 @@ class FocusTimerState: ObservableObject {
 
     /// Progress from 0.0 (just started) to 1.0 (completed)
     var progress: Double {
+        // Explicit completion state - guarantees 1.0 when timer is done
+        if timerPhase == .completed || remainingSeconds <= 0 {
+            return 1.0
+        }
+
         guard targetDurationSeconds > 0 else { return 0.0 }
+
         let elapsed = targetDurationSeconds - remainingSeconds
         return min(1.0, max(0.0, Double(elapsed) / Double(targetDurationSeconds)))
     }

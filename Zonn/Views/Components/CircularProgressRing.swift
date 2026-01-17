@@ -33,6 +33,13 @@ struct CircularProgressRing: View {
         ringColor.opacity(0.2)
     }
 
+    /// Clamped progress value ensuring clean 0.0 and 1.0 boundaries
+    private var clampedProgress: Double {
+        if progress >= 0.999 { return 1.0 }
+        if progress <= 0.001 { return 0.0 }
+        return progress
+    }
+
     var body: some View {
         ZStack {
             // Background track circle
@@ -45,18 +52,29 @@ struct CircularProgressRing: View {
                     )
                 )
 
-            // Progress ring
-            Circle()
-                .trim(from: 0, to: CGFloat(min(progress, 1.0)))
-                .stroke(
-                    ringGradient,
-                    style: StrokeStyle(
-                        lineWidth: lineWidth,
-                        lineCap: .round
+            // Progress ring - use full circle when complete to avoid gap from round lineCap
+            if clampedProgress >= 1.0 {
+                Circle()
+                    .stroke(
+                        ringGradient,
+                        style: StrokeStyle(
+                            lineWidth: lineWidth,
+                            lineCap: .round
+                        )
                     )
-                )
-                .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 0.3), value: progress)
+            } else {
+                Circle()
+                    .trim(from: 0, to: CGFloat(clampedProgress))
+                    .stroke(
+                        ringGradient,
+                        style: StrokeStyle(
+                            lineWidth: lineWidth,
+                            lineCap: .round
+                        )
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeInOut(duration: 0.3), value: clampedProgress)
+            }
 
             // Inner shadow effect for depth
             Circle()
@@ -87,20 +105,92 @@ struct CircularProgressRing: View {
     }
 }
 
-#Preview("Progress Ring - 0%") {
+// MARK: - Previews
+
+#Preview("All Progress States") {
+    let backgroundColor = Color(red: 0.4, green: 0.65, blue: 0.55)
+
+    ScrollView {
+        VStack(spacing: 24) {
+            Text("Progress Ring States")
+                .font(.headline)
+                .foregroundStyle(.white)
+
+            // First row: 0%, 25%, 50%
+            HStack(spacing: 20) {
+                ProgressPreviewItem(progress: 0.0, label: "0%\n(Empty)")
+                ProgressPreviewItem(progress: 0.25, label: "25%")
+                ProgressPreviewItem(progress: 0.5, label: "50%")
+            }
+
+            // Second row: 75%, 99.9%, 100%
+            HStack(spacing: 20) {
+                ProgressPreviewItem(progress: 0.75, label: "75%")
+                ProgressPreviewItem(progress: 0.999, label: "99.9%\n(Edge)")
+                ProgressPreviewItem(progress: 1.0, label: "100%\n(Full)")
+            }
+        }
+        .padding()
+    }
+    .frame(width: 400, height: 450)
+    .background(backgroundColor)
+}
+
+#Preview("Individual - Empty (0%)") {
     CircularProgressRing(progress: 0.0)
         .padding()
         .background(Color(red: 0.4, green: 0.65, blue: 0.55))
 }
 
-#Preview("Progress Ring - 50%") {
+#Preview("Individual - Quarter (25%)") {
+    CircularProgressRing(progress: 0.25)
+        .padding()
+        .background(Color(red: 0.4, green: 0.65, blue: 0.55))
+}
+
+#Preview("Individual - Half (50%)") {
     CircularProgressRing(progress: 0.5)
         .padding()
         .background(Color(red: 0.4, green: 0.65, blue: 0.55))
 }
 
-#Preview("Progress Ring - 100%") {
+#Preview("Individual - Three Quarters (75%)") {
+    CircularProgressRing(progress: 0.75)
+        .padding()
+        .background(Color(red: 0.4, green: 0.65, blue: 0.55))
+}
+
+#Preview("Individual - Near Complete (99.9%)") {
+    CircularProgressRing(progress: 0.999)
+        .padding()
+        .background(Color(red: 0.4, green: 0.65, blue: 0.55))
+}
+
+#Preview("Individual - Complete (100%)") {
     CircularProgressRing(progress: 1.0)
         .padding()
         .background(Color(red: 0.4, green: 0.65, blue: 0.55))
+}
+
+// MARK: - Preview Helper
+
+/// Helper view for displaying a progress ring with a label in previews
+private struct ProgressPreviewItem: View {
+    let progress: Double
+    let label: String
+
+    var body: some View {
+        VStack(spacing: 8) {
+            CircularProgressRing(
+                progress: progress,
+                lineWidth: 8,
+                size: 100
+            )
+
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+        }
+    }
 }
