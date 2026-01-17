@@ -23,7 +23,7 @@ struct SpotifyPermissionView: View {
                 .foregroundColor(AppColors.textOnGreen)
 
             // Description
-            Text("FlowState needs permission to control Spotify. Please grant automation access to enable music controls.")
+            Text("Zonn needs permission to control Spotify. Please grant automation access to enable music controls.")
                 .font(.system(size: 12))
                 .foregroundColor(AppColors.textOnGreenSecondary)
                 .multilineTextAlignment(.center)

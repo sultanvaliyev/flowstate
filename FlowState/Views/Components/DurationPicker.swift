@@ -9,7 +9,7 @@ struct DurationPicker: View {
     static let presetDurations: [Int] = [15, 25, 30, 45, 60, 90, 120]
 
     /// UserDefaults key for persisting last used duration
-    private static let lastDurationKey = "com.flowstate.lastDuration"
+    private static let lastDurationKey = "com.zonn.lastDuration"
 
     /// Text color
     var textColor: Color = .white

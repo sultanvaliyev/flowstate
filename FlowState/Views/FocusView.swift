@@ -23,14 +23,16 @@ struct FocusView: View {
                 AppColors.forestGreen
                     .ignoresSafeArea()
 
-                if sizeClass.isCompact {
-                    compactLayout
-                } else {
+                // Layout switches automatically based on window size
+                if sizeClass == .regular {
                     regularLayout
+                } else {
+                    compactLayout
                 }
             }
+            .animation(.easeInOut(duration: 0.2), value: sizeClass)
         }
-        .frame(minWidth: 320, maxWidth: 450, minHeight: 620, maxHeight: 800)
+        .frame(minWidth: 280, maxWidth: 450, minHeight: 360, maxHeight: 850)
         .onAppear {
             selectedMinutes = timerState.targetDurationSeconds / 60
             spotifyManager.startPolling()
@@ -43,11 +45,15 @@ struct FocusView: View {
     // MARK: - Layout Variants
 
     private var compactLayout: some View {
-        VStack(spacing: 16) {
-            timerSection
+        VStack(spacing: 12) {
+            // Progress ring with tree and timer
+            compactTimerSection
 
-            // Minimal control button
-            compactControlButton
+            // Mini Spotify controls
+            SpotifyMiniPlayerView(spotifyManager: spotifyManager)
+
+            // Timer controls
+            compactTimerControls
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 16)
@@ -55,18 +61,48 @@ struct FocusView: View {
         .padding(.bottom, 16)
     }
 
-    private var compactControlButton: some View {
-        Group {
+    private var compactTimerSection: some View {
+        ZStack {
+            CircularProgressRing(
+                progress: timerState.progress,
+                ringColor: AppColors.ringGreen,
+                lineWidth: 12,
+                size: 180
+            )
+
+            VStack(spacing: 6) {
+                TreeGrowthView(progress: timerState.progress, size: 36)
+
+                Text(timerState.formattedRemaining)
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(AppColors.textOnGreen)
+                    .monospacedDigit()
+
+                if timerState.timerPhase == .paused {
+                    Text("PAUSED")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(AppColors.warning)
+                }
+            }
+        }
+    }
+
+    private var compactTimerControls: some View {
+        HStack(spacing: 16) {
             switch timerState.timerPhase {
             case .idle, .completed, .cancelled:
                 Button(action: { timerState.start() }) {
-                    Image(systemName: "play.fill")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(width: 36, height: 36)
-                        .background(Circle().fill(AppColors.buttonGreen))
+                    HStack(spacing: 6) {
+                        Image(systemName: "leaf.fill").font(.system(size: 14))
+                        Text("Plant").font(.system(size: 14, weight: .semibold))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Capsule().fill(AppColors.buttonGreen))
                 }
                 .buttonStyle(.plain)
+
             case .running:
                 Button(action: { timerState.pause() }) {
                     Image(systemName: "pause.fill")
@@ -76,6 +112,16 @@ struct FocusView: View {
                         .background(Circle().fill(Color.white.opacity(0.2)))
                 }
                 .buttonStyle(.plain)
+
+                Button(action: { timerState.cancel() }) {
+                    Image(systemName: "stop.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(AppColors.buttonCancel)
+                        .frame(width: 36, height: 36)
+                        .background(Circle().fill(Color.white.opacity(0.15)))
+                }
+                .buttonStyle(.plain)
+
             case .paused:
                 Button(action: { timerState.resume() }) {
                     Image(systemName: "play.fill")
@@ -83,6 +129,15 @@ struct FocusView: View {
                         .foregroundColor(.white)
                         .frame(width: 36, height: 36)
                         .background(Circle().fill(AppColors.buttonGreen))
+                }
+                .buttonStyle(.plain)
+
+                Button(action: { timerState.cancel() }) {
+                    Image(systemName: "stop.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(AppColors.buttonCancel)
+                        .frame(width: 36, height: 36)
+                        .background(Circle().fill(Color.white.opacity(0.15)))
                 }
                 .buttonStyle(.plain)
             }

@@ -4,8 +4,17 @@ import SwiftUI
 /// NSPanel wrapper for the Focus View window
 /// Provides a floating, always-on-top panel for the focus timer interface
 class FocusPanel: NSPanel {
-    /// Default size for the focus panel (maximum size to show all content)
-    static let defaultSize = NSSize(width: 400, height: 700)
+    /// Default size for the focus panel (expanded size to show all content)
+    static let defaultSize = NSSize(width: 420, height: 750)
+
+    /// Compact size for the focus panel
+    static let compactSize = NSSize(
+        width: WindowSizeConstants.compactSize.width,
+        height: WindowSizeConstants.compactSize.height
+    )
+
+    /// Current layout mode of the panel
+    private(set) var layoutMode: WindowLayoutMode = .expanded
 
     /// Create a new focus panel with optional custom position
     /// - Parameters:
@@ -49,8 +58,14 @@ class FocusPanel: NSPanel {
         configurePanel()
 
         // Set min/max size constraints for resizing
-        minSize = NSSize(width: 320, height: 620)
-        maxSize = NSSize(width: 450, height: 800)
+        minSize = NSSize(
+            width: WindowSizeConstants.minimumSize.width,
+            height: WindowSizeConstants.minimumSize.height
+        )
+        maxSize = NSSize(
+            width: WindowSizeConstants.maximumSize.width,
+            height: WindowSizeConstants.maximumSize.height
+        )
 
         // Set the SwiftUI content
         let hostingView = NSHostingView(rootView: contentView)
@@ -85,11 +100,22 @@ class FocusPanel: NSPanel {
         titleVisibility = .hidden
 
         // Show standard window buttons (close, minimize)
-        // Zoom button hidden since we use min/max size constraints
-        standardWindowButton(.zoomButton)?.isHidden = true
+        // Zoom button triggers expand/collapse instead of fullscreen
+        configureZoomButtonAction()
 
         // Allow the panel to become key for keyboard input
         self.becomesKeyOnlyIfNeeded = false
+    }
+
+    /// Configure the zoom button to toggle layout mode instead of fullscreen
+    private func configureZoomButtonAction() {
+        guard let zoomButton = standardWindowButton(.zoomButton) else { return }
+        zoomButton.target = self
+        zoomButton.action = #selector(zoomButtonClicked(_:))
+    }
+
+    @objc private func zoomButtonClicked(_ sender: Any?) {
+        toggleLayoutMode(animated: true)
     }
 
     /// Show the panel with animation
@@ -124,6 +150,39 @@ class FocusPanel: NSPanel {
         } else {
             showAnimated()
         }
+    }
+
+    /// Sets the window layout mode with optional animation
+    func setLayoutMode(_ mode: WindowLayoutMode, animated: Bool = true) {
+        guard layoutMode != mode else { return }
+
+        layoutMode = mode
+        let targetSize = mode == .expanded ? Self.defaultSize : Self.compactSize
+
+        let currentFrame = frame
+        let newOrigin = NSPoint(
+            x: currentFrame.origin.x,
+            y: currentFrame.origin.y + currentFrame.height - targetSize.height
+        )
+        let newFrame = NSRect(origin: newOrigin, size: targetSize)
+
+        if animated {
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.25
+                context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                animator().setFrame(newFrame, display: true)
+            }
+        } else {
+            setFrame(newFrame, display: true)
+        }
+
+        NotificationCenter.default.post(name: .windowLayoutModeDidChange, object: self)
+    }
+
+    /// Toggles between expanded and compact layout modes
+    func toggleLayoutMode(animated: Bool = true) {
+        let newMode: WindowLayoutMode = (layoutMode == .expanded) ? .compact : .expanded
+        setLayoutMode(newMode, animated: animated)
     }
 
     /// Position the panel at a specific screen location
@@ -267,5 +326,13 @@ class FocusPanelController: NSObject, NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         wasClosedByUser = true
         // Do NOT dispose the panel, keep instance alive
+    }
+
+    func windowShouldZoom(_ window: NSWindow, toFrame newFrame: NSRect) -> Bool {
+        // Intercept zoom to trigger layout toggle instead
+        if let focusPanel = window as? FocusPanel {
+            focusPanel.toggleLayoutMode(animated: true)
+        }
+        return false
     }
 }

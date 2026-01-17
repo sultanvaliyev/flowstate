@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Color constants for the FlowState app theme
+/// Color constants for the Zonn app theme
 /// Inspired by forest/nature aesthetics for focus and productivity
 enum AppColors {
     // MARK: - Main Background Colors
@@ -79,9 +79,9 @@ enum AppColors {
 // MARK: - Color Extensions for Convenience
 
 extension Color {
-    /// Quick access to FlowState forest green
-    static var flowStateGreen: Color { AppColors.forestGreen }
+    /// Quick access to Zonn forest green
+    static var zonnGreen: Color { AppColors.forestGreen }
 
-    /// Quick access to FlowState cream background
-    static var flowStateCream: Color { AppColors.creamBackground }
+    /// Quick access to Zonn cream background
+    static var zonnCream: Color { AppColors.creamBackground }
 }

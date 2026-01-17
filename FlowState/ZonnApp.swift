@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct FlowStateApp: App {
+struct ZonnApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {

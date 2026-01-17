@@ -50,7 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setupMenuBarItem() {
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "leaf.fill", accessibilityDescription: "FlowState")
+            button.image = NSImage(systemSymbolName: "leaf.fill", accessibilityDescription: "Zonn")
         }
 
         let menu = NSMenu()
@@ -71,7 +71,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Statistics", action: #selector(showStatistics), keyEquivalent: ","))
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Quit FlowState", action: #selector(quitApp), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: "Quit Zonn", action: #selector(quitApp), keyEquivalent: "q"))
 
         statusItem.menu = menu
     }

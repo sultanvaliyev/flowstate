@@ -17,11 +17,11 @@ final class SessionStore {
     private(set) var persistentStorageError: Error?
 
     /// Logger for storage-related events
-    private let logger = Logger(subsystem: "com.flowstate", category: "SessionStore")
+    private let logger = Logger(subsystem: "com.zonn", category: "SessionStore")
 
     /// UserDefaults key for legacy session data (used for migration)
-    private let legacySessionsKey = "com.flowstate.sessions"
-    private let migrationCompletedKey = "com.flowstate.migrationCompleted"
+    private let legacySessionsKey = "com.zonn.sessions"
+    private let migrationCompletedKey = "com.zonn.migrationCompleted"
 
     private init() {
         let schema = Schema([FocusSessionModel.self])

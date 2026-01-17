@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Color constants for Spotify integration UI
-/// Designed to complement the existing FlowState forest theme
+/// Designed to complement the existing Zonn forest theme
 extension AppColors {
     // MARK: - Spotify Widget Colors
 

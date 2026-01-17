@@ -1,4 +1,4 @@
-name: FlowState
+name: Zonn
 options:
   bundleIdPrefix: com.sultanvaliyev
   deploymentTarget:
@@ -6,7 +6,7 @@ options:
   xcodeVersion: "15.0"
 
 targets:
-  FlowState:
+  Zonn:
     type: application
     platform: macOS
     sources:
@@ -23,8 +23,8 @@ targets:
         # - Windows (FocusPanel)
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.sultanvaliyev.FlowState
-        PRODUCT_NAME: FlowState
+        PRODUCT_BUNDLE_IDENTIFIER: com.sultanvaliyev.Zonn
+        PRODUCT_NAME: Zonn
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"
         INFOPLIST_FILE: FlowState/Info.plist
@@ -33,7 +33,7 @@ targets:
         MACOSX_DEPLOYMENT_TARGET: "14.0"
         CODE_SIGN_STYLE: Manual
         CODE_SIGN_IDENTITY: "-"
-        CODE_SIGN_ENTITLEMENTS: FlowState/FlowState.entitlements
+        CODE_SIGN_ENTITLEMENTS: FlowState/Zonn.entitlements
         ENABLE_HARDENED_RUNTIME: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     info:
@@ -41,7 +41,7 @@ targets:
       properties:
         LSUIElement: true
         NSHighResolutionCapable: true
-        CFBundleName: FlowState
-        CFBundleDisplayName: FlowState
+        CFBundleName: Zonn
+        CFBundleDisplayName: Zonn
         CFBundleShortVersionString: "1.0.0"
         CFBundleVersion: "1"
