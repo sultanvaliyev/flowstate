@@ -1,50 +1,36 @@
 import Foundation
 
-/// Manages persistence and calculation of focus session statistics
+/// Manages calculation of focus session statistics using SessionStore
+@MainActor
 class StatisticsManager {
     static let shared = StatisticsManager()
 
-    private let sessionsKey = "com.flowstate.sessions"
-    private let userDefaults = UserDefaults.standard
+    private let sessionStore = SessionStore.shared
 
     private init() {}
 
     // MARK: - Session Recording
 
     func recordSession(_ session: FocusSession) {
-        var sessions = getAllSessions()
-        sessions.append(session)
-        saveSessions(sessions)
+        sessionStore.save(session)
     }
 
     // MARK: - Session Retrieval
 
     func getAllSessions() -> [FocusSession] {
-        guard let data = userDefaults.data(forKey: sessionsKey),
-              let sessions = try? JSONDecoder().decode([FocusSession].self, from: data) else {
-            return []
-        }
-        return sessions
+        sessionStore.fetchAll()
     }
 
     func getSessionsForToday() -> [FocusSession] {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-
-        return getAllSessions().filter { session in
-            calendar.isDate(session.startTime, inSameDayAs: today)
-        }
+        sessionStore.fetchToday()
     }
 
     func getSessionsForThisWeek() -> [FocusSession] {
-        let calendar = Calendar.current
-        guard let weekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())) else {
-            return []
-        }
+        sessionStore.fetchThisWeek()
+    }
 
-        return getAllSessions().filter { session in
-            session.startTime >= weekStart
-        }
+    func getSessionsByLabel(_ label: String) -> [FocusSession] {
+        sessionStore.fetchByLabel(label)
     }
 
     // MARK: - Statistics Calculation
@@ -60,6 +46,13 @@ class StatisticsManager {
 
         let averageSeconds = allSessions.isEmpty ? 0 : totalSeconds / allSessions.count
 
+        // Calculate completed vs cancelled sessions
+        let completedSessions = allSessions.filter { $0.wasCompleted }.count
+        let cancelledSessions = allSessions.count - completedSessions
+
+        // Calculate label-based statistics
+        let labelStats = calculateLabelStatistics(allSessions)
+
         return SessionStatistics(
             totalSessions: allSessions.count,
             totalFocusTimeSeconds: totalSeconds,
@@ -67,18 +60,82 @@ class StatisticsManager {
             todaySessions: todaySessions.count,
             todayFocusTimeSeconds: todaySeconds,
             thisWeekSessions: weekSessions.count,
-            thisWeekFocusTimeSeconds: weekSeconds
+            thisWeekFocusTimeSeconds: weekSeconds,
+            completedSessions: completedSessions,
+            cancelledSessions: cancelledSessions,
+            labelStatistics: labelStats
         )
+    }
+
+    /// Calculate statistics grouped by label
+    private func calculateLabelStatistics(_ sessions: [FocusSession]) -> [LabelStatistics] {
+        // Group sessions by label
+        let grouped = Dictionary(grouping: sessions) { $0.label }
+
+        return grouped.map { label, labelSessions in
+            let totalSeconds = labelSessions.reduce(0) { $0 + $1.durationSeconds }
+            let completedCount = labelSessions.filter { $0.wasCompleted }.count
+            let cancelledCount = labelSessions.count - completedCount
+
+            return LabelStatistics(
+                label: label,
+                sessionCount: labelSessions.count,
+                totalFocusTimeSeconds: totalSeconds,
+                completedCount: completedCount,
+                cancelledCount: cancelledCount
+            )
+        }.sorted { $0.sessionCount > $1.sessionCount }
+    }
+
+    /// Get statistics for a specific time period
+    func getStatisticsForPeriod(from startDate: Date, to endDate: Date) -> SessionStatistics {
+        let periodSessions = sessionStore.fetchSessionsInRange(from: startDate, to: endDate)
+
+        let totalSeconds = periodSessions.reduce(0) { $0 + $1.durationSeconds }
+        let averageSeconds = periodSessions.isEmpty ? 0 : totalSeconds / periodSessions.count
+        let completedSessions = periodSessions.filter { $0.wasCompleted }.count
+        let cancelledSessions = periodSessions.count - completedSessions
+        let labelStats = calculateLabelStatistics(periodSessions)
+
+        return SessionStatistics(
+            totalSessions: periodSessions.count,
+            totalFocusTimeSeconds: totalSeconds,
+            averageSessionSeconds: averageSeconds,
+            todaySessions: 0,
+            todayFocusTimeSeconds: 0,
+            thisWeekSessions: 0,
+            thisWeekFocusTimeSeconds: 0,
+            completedSessions: completedSessions,
+            cancelledSessions: cancelledSessions,
+            labelStatistics: labelStats
+        )
+    }
+
+    /// Get completion rate for all sessions
+    func getCompletionRate() -> Double {
+        let allSessions = getAllSessions()
+        guard !allSessions.isEmpty else { return 0 }
+
+        let completedCount = allSessions.filter { $0.wasCompleted }.count
+        return Double(completedCount) / Double(allSessions.count)
+    }
+
+    /// Get all unique session labels
+    func getAllLabels() -> [String] {
+        sessionStore.fetchAllLabels()
     }
 
     // MARK: - Data Management
 
     func clearAllData() {
-        userDefaults.removeObject(forKey: sessionsKey)
+        sessionStore.deleteAll()
     }
 
-    private func saveSessions(_ sessions: [FocusSession]) {
-        guard let data = try? JSONEncoder().encode(sessions) else { return }
-        userDefaults.set(data, forKey: sessionsKey)
+    func deleteSession(_ session: FocusSession) {
+        sessionStore.delete(session)
+    }
+
+    func deleteSession(id: UUID) {
+        sessionStore.delete(id: id)
     }
 }

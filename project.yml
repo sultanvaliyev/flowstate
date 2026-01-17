@@ -1,0 +1,47 @@
+name: FlowState
+options:
+  bundleIdPrefix: com.sultanvaliyev
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "15.0"
+
+targets:
+  FlowState:
+    type: application
+    platform: macOS
+    sources:
+      - path: FlowState
+        excludes:
+          - "**/.DS_Store"
+        # Includes all subdirectories:
+        # - Managers (StatisticsManager, SessionStore)
+        # - Models (TimerState, FocusTimerState, FocusSession, etc.)
+        # - Theme (AppColors)
+        # - Utilities (MotivationalTextProvider)
+        # - Views (TimerView, FocusView, HistoryView)
+        # - Views/Components (CircularProgressRing, TreeGrowthView, etc.)
+        # - Windows (FocusPanel)
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sultanvaliyev.FlowState
+        PRODUCT_NAME: FlowState
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        INFOPLIST_FILE: FlowState/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        SWIFT_VERSION: "5.9"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_ENTITLEMENTS: FlowState/FlowState.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: FlowState/Info.plist
+      properties:
+        LSUIElement: true
+        NSHighResolutionCapable: true
+        CFBundleName: FlowState
+        CFBundleDisplayName: FlowState
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1"

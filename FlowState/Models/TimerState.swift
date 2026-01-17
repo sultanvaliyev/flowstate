@@ -2,10 +2,13 @@ import Foundation
 import Combine
 
 /// Observable state for the focus timer
+@MainActor
 class TimerState: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var elapsedSeconds: Int = 0
     @Published var sessionStartTime: Date?
+    @Published var sessionLabel: String = "Focus"
+    @Published var targetDurationSeconds: Int = 0
 
     private var timer: Timer?
     private let statisticsManager = StatisticsManager.shared
@@ -36,7 +39,9 @@ class TimerState: ObservableObject {
         }
 
         // Ensure timer runs even when menu is open
-        RunLoop.main.add(timer!, forMode: .common)
+        if let timer = timer {
+            RunLoop.main.add(timer, forMode: .common)
+        }
     }
 
     func stopSession() {
@@ -52,12 +57,21 @@ class TimerState: ObservableObject {
                 id: UUID(),
                 startTime: startTime,
                 endTime: Date(),
-                durationSeconds: elapsedSeconds
+                durationSeconds: elapsedSeconds,
+                targetDurationSeconds: targetDurationSeconds,
+                label: sessionLabel
             )
             statisticsManager.recordSession(session)
         }
 
         sessionStartTime = nil
+    }
+
+    /// Start a session with a specific label and target duration
+    func startSession(label: String, targetMinutes: Int = 0) {
+        sessionLabel = label
+        targetDurationSeconds = targetMinutes * 60
+        startSession()
     }
 
     func toggleSession() {
