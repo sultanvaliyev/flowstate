@@ -26,5 +26,7 @@
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>Zonn needs to control Spotify to display currently playing music and provide playback controls during your focus sessions.</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
 </dict>
 </plist>
