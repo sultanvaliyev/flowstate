@@ -46,7 +46,7 @@ Last updated: January 2026
 - [ ] **App Name:** Zonn (verify availability in App Store Connect)
 - [ ] **Subtitle:** Focus Timer for Deep Work (30 characters max)
 - [ ] **Primary Language:** English (U.S.)
-- [ ] **Bundle ID:** com.sultanvaliyev.Zonn
+- [ ] **Bundle ID:** app.zonn.Zonn
 - [ ] **SKU:** zonn-focus-timer-001 (unique identifier for your records)
 
 ### Category Selection

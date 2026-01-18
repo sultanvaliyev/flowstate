@@ -2,7 +2,7 @@ import AppKit
 import Foundation
 import os.log
 
-private let logger = Logger(subsystem: "com.sultanvaliyev.Zonn", category: "SpotifyService")
+private let logger = Logger(subsystem: "app.zonn.Zonn", category: "SpotifyService")
 
 /// AppleScript-based implementation of SpotifyServiceProtocol.
 /// Uses NSAppleScript to communicate with the Spotify desktop application.
@@ -201,7 +201,7 @@ final class AppleScriptSpotifyService: SpotifyServiceProtocol {
     private nonisolated func fetchPlaybackStateSync() throws -> SpotifyPlaybackState {
         let delimiter = "|||"
         let script = """
-        tell application "Spotify"
+        tell application id "com.spotify.client"
             if player state is stopped then
                 return "stopped"
             end if
@@ -312,7 +312,7 @@ final class AppleScriptSpotifyService: SpotifyServiceProtocol {
         }
 
         return """
-        tell application "Spotify"
+        tell application id "com.spotify.client"
             \(spotifyCommand)
         end tell
         """

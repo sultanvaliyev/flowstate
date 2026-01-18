@@ -2,7 +2,7 @@ import Foundation
 import Combine
 import os.log
 
-private let logger = Logger(subsystem: "com.sultanvaliyev.Zonn", category: "SpotifyManager")
+private let logger = Logger(subsystem: "app.zonn.Zonn", category: "SpotifyManager")
 
 /// Manages Spotify playback state and provides an observable interface for SwiftUI views.
 /// Uses dependency injection for the underlying Spotify service to enable testing.

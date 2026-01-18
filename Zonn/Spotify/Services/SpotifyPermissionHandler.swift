@@ -29,13 +29,13 @@ final class SpotifyPermissionHandler: SpotifyPermissionProtocol {
     private enum Script {
         /// Script to check if we have permission by querying Spotify's running state
         static let checkPermission = """
-            tell application "Spotify" to return running
+            tell application id "com.spotify.client" to return running
             """
 
         /// Benign script to trigger the permission prompt by talking to Spotify directly
         /// This will cause macOS to prompt for automation permission for Spotify
         static let requestPermission = """
-            tell application "Spotify" to return name
+            tell application id "com.spotify.client" to return name
             """
     }
 

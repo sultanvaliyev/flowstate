@@ -1,6 +1,6 @@
 name: Zonn
 options:
-  bundleIdPrefix: com.sultanvaliyev
+  bundleIdPrefix: app.zonn
   deploymentTarget:
     macOS: "14.0"
   xcodeVersion: "15.0"
@@ -15,7 +15,7 @@ targets:
           - "**/.DS_Store"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.sultanvaliyev.Zonn
+        PRODUCT_BUNDLE_IDENTIFIER: app.zonn.Zonn
         PRODUCT_NAME: Zonn
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"

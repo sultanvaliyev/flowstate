@@ -12,7 +12,7 @@ enum AppConstants {
     }
 
     enum LoggerSubsystem {
-        static let main = "com.sultanvaliyev.Zonn"
+        static let main = "app.zonn.Zonn"
     }
 
     enum Validation {
