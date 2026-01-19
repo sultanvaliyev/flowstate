@@ -24,6 +24,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         focusPanelController?.showPanel()
         setupGlobalKeyboardShortcut()
 
+        // Request notification permissions for session completion alerts
+        Task {
+            await NotificationManager.shared.requestAuthorization()
+        }
+
         // Note: Spotify permission is now handled lazily when the user first
         // interacts with Spotify features, providing a better UX than prompting
         // immediately on app launch.

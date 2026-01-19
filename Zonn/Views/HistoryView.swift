@@ -271,11 +271,31 @@ struct SessionRowView: View {
         }
     }
 
-    /// Formatted time string (e.g., "2:30 PM")
-    private var timeString: String {
+    /// Shared date formatter for time strings
+    private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
-        return formatter.string(from: session.startTime)
+        return formatter
+    }()
+
+    /// Formatted start time string (e.g., "2:30 PM")
+    private var startTimeString: String {
+        Self.timeFormatter.string(from: session.startTime)
+    }
+
+    /// Formatted end time string (e.g., "2:55 PM")
+    private var endTimeString: String {
+        Self.timeFormatter.string(from: session.endTime)
+    }
+
+    /// Formatted time range string (e.g., "2:30 PM - 2:55 PM")
+    private var timeRangeString: String {
+        "\(startTimeString) - \(endTimeString)"
+    }
+
+    /// Legacy time string for backward compatibility
+    private var timeString: String {
+        startTimeString
     }
 
     /// Accessibility description of completion status
@@ -297,7 +317,7 @@ struct SessionRowView: View {
                     .foregroundColor(.primary)
                     .lineLimit(1)
 
-                Text(timeString)
+                Text(timeRangeString)
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
             }
@@ -321,7 +341,7 @@ struct SessionRowView: View {
         .padding(.vertical, 10)
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Session: \(session.label), duration: \(session.formattedDuration), \(completionStatus), at \(timeString)")
+        .accessibilityLabel("Session: \(session.label), duration: \(session.formattedDuration), \(completionStatus), from \(startTimeString) to \(endTimeString)")
     }
 }
 

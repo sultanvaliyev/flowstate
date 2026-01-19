@@ -112,6 +112,9 @@ class FocusTimerState: ObservableObject {
         // Record partial session if any time elapsed
         recordSession()
         resetAfterEnd()
+
+        // Reset display to 00:00 after cancellation
+        remainingSeconds = 0
     }
 
     /// Marks the session as completed (called when timer reaches zero)
@@ -125,6 +128,16 @@ class FocusTimerState: ObservableObject {
 
         // Record the completed session
         recordSession()
+
+        // Show system notification for session completion
+        NotificationManager.shared.showSessionCompletionNotification(
+            duration: targetDurationSeconds,
+            label: sessionLabel.isEmpty ? "Focus" : sessionLabel,
+            wasCompleted: true
+        )
+
+        // Play completion sound
+        SoundManager.shared.playCompletionSound()
     }
 
     // MARK: - Private Methods

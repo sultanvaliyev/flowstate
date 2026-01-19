@@ -45,6 +45,8 @@
 		EDBB62A5FCFFCE4830D3F911 /* LayoutSizeClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458483F919CACD42C7798C00 /* LayoutSizeClass.swift */; };
 		F62FFF3C9BCCD339E186F08C /* SessionLabelEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1C44CC529CD9A84E871417 /* SessionLabelEditor.swift */; };
 		F8D7381970E93EF9FB4E7F25 /* SpotifyPermissionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0E5BD1C4BEC06397622A4A /* SpotifyPermissionProtocol.swift */; };
+		SOUNDMGR001BUILDFILE001 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SOUNDMGR001FILEREF001 /* SoundManager.swift */; };
+		NOTIFMGR001BUILDFILE001 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = NOTIFMGR001FILEREF001 /* NotificationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,6 +91,8 @@
 		ED0E5BD1C4BEC06397622A4A /* SpotifyPermissionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyPermissionProtocol.swift; sourceTree = "<group>"; };
 		EF954378AB27B0D5A6AC7AA7 /* SpotifyMiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyMiniPlayerView.swift; sourceTree = "<group>"; };
 		FBEA34CAAA6F042BFDE3901F /* FocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusView.swift; sourceTree = "<group>"; };
+		SOUNDMGR001FILEREF001 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		NOTIFMGR001FILEREF001 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -120,6 +124,7 @@
 				07A632EB189C4AEBC868447A /* ZonnApp.swift */,
 				134B6003CFD614C59E0D7671 /* Managers */,
 				E6F5B087D5D30564BBA59024 /* Models */,
+				SOUNDMGR001GROUPREF001 /* Services */,
 				B243AF21E13312D13E1AC1AC /* Spotify */,
 				33E767A72CBBBC4DCF26BE9C /* Theme */,
 				D38FB74C798E242FA709F59F /* Utilities */,
@@ -235,6 +240,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		SOUNDMGR001GROUPREF001 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				NOTIFMGR001FILEREF001 /* NotificationManager.swift */,
+				SOUNDMGR001FILEREF001 /* SoundManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -336,6 +350,8 @@
 				13CAD20044B0D0C38BB8F6CB /* TreeGrowthView.swift in Sources */,
 				4001780B8ADC8046D57A6B29 /* WindowLayoutContracts.swift in Sources */,
 				46F3918F0B92D80164DACC35 /* ZonnApp.swift in Sources */,
+				SOUNDMGR001BUILDFILE001 /* SoundManager.swift in Sources */,
+				NOTIFMGR001BUILDFILE001 /* NotificationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
