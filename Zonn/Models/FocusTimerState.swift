@@ -193,11 +193,12 @@ class FocusTimerState: ObservableObject {
         timerPhase = .idle
     }
 
-    /// Sets a new target duration and resets the timer
+    /// Sets a new target duration and updates the display when not active
     func setDuration(_ seconds: Int) {
         let clampedDuration = min(max(0, seconds), Self.maxDurationSeconds)
         targetDurationSeconds = clampedDuration
-        if timerPhase == .idle {
+        // Update display when timer is not actively running or paused
+        if !timerPhase.isActive {
             remainingSeconds = clampedDuration
         }
     }
